@@ -1,0 +1,38 @@
+global:
+  loadBalancing: random        # random | roundRobin | lessQueue
+  requestTimeoutSecs: 600      # timeout for a single proxied request
+  healthRetrySec: 5            # backend /health polling interval
+  queuePollSec: 5              # queue-depth polling interval (lessQueue)
+
+models:
+  deepseek:
+    urls:
+      - http://model1:3000
+      - http://model2:3000
+      - http://model3:3000
+  qwen:
+    requestTimeoutSecs: 300    # overrides global for this model
+    urls:
+      - http://model4:3000
+      - http://model5:3000
+      - http://model6:3000
+
+clients:
+  leha:
+    cn: CI01929381
+    concurrencyLimit:
+      - model: deepseek
+        maxParallel: 5
+  semen:
+    cn: CI01922362
+    concurrencyLimit:
+      - model: deepseek
+        maxParallel: 1
+      - model: qwen
+        maxParallel: 5
+
+tls:
+  cert: /opt/certs/cert.pem    # server certificate (incoming connections)
+  key: /opt/certs/key.pem      # server private key
+  cacert: /opt/certs/cacert.pem # CA for verifying client certs (mTLS)
+  verify: true                 # require and verify the client certificate
